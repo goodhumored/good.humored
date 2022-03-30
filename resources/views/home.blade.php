@@ -24,6 +24,7 @@
 		<div class="row align-self-end m-0"> 
 			<form class="msg_form border-top" action="{{ route('message_send') }}" method="POST">
 				@csrf
+				<input type="hidden" name="pid" value"-1">
 				<div class="row p-3">
 					<div class="col textfield">
 						<textarea name="text" class="form-control" style="max-height: 150px"></textarea>

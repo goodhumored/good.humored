@@ -38,3 +38,6 @@ Route::post('/send_message', [MessageController::class, 'send'])->name('message_
 
 Route::get('/echo', [TestController::class, 'echo'])->name("echo");
 Route::post('/echo', [TestController::class, 'echo'])->name("echo");
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

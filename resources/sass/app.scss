@@ -1,12 +1,8 @@
-html {
-    --msg-height: 151px;
-}
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
 
-.msg {
-    height: var(--msg-height);  
-}
+// Variables
+@import 'variables';
 
-.messages {
-    overflow-y: scroll;
-    height: calc(100vh - var(--msg-height));
-}
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
