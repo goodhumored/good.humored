@@ -1,32 +1,61 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
+//require('./bootstrap');
 
-require('./bootstrap');
+function show_toast(type, message) {
+    let el = $('#'+type+'Toast')[0].cloneNode(true);
+    $(el).find('.toast-body').text(message);
+    $(el).on('hidden.bs.toast', (e)=>{
+        e.target.remove();
+    });
+    $('.toast-container')[0].appendChild(el);
+    new bootstrap.Toast(el).show();
+}
 
-window.Vue = require('vue').default;
+function show_form_error(form, msg) {
+    a = $(form).find('.alert');
+    a.text(msg);
+    a.removeClass('d-none');
+}
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
+$('.msg_form').submit((e)=>{
+    e.preventDefault();
+    fd = new FormData(e.target);
+    $.ajax({
+        type: "post",
+        url: e.target.getAttribute('action'),
+        data: fd,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            console.log(response)
+        }
+    });
+})
 
-// const files = require.context('./', true, /\.vue$/i)
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
+$('.auth_form').submit((e)=>{
+    e.preventDefault();
+    fd = new FormData(e.target);
+    $.ajax({
+        type: e.target.getAttribute('method'),
+        url: e.target.getAttribute('action'),
+        data: fd,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            if (response['success']) {
+                show_toast('succ', response['message']);
+                document.location.reload();
+            } else {
+                show_form_error(e.target, response['message']);
+            }
+        },
+        error: function(xhr, s, t) {
+            show_form_error(e.target, xhr.messageJson['message']);
+        }
+    });
+})
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
-
-const app = new Vue({
-    el: '#app',
-});
+if (messages != null) {
+    messages.forEach(element => {
+        show_toast(element[0], element[1]);
+    });
+}

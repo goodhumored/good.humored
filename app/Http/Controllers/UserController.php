@@ -15,7 +15,10 @@ class UserController extends Controller
             'email' => 'bail|required|email|unique:App\Models\User,email',
             'password' => "bail|required|min:4|max:30|regex: /[a-zA-Z0-9\\*\\?\\\\&\\(\\)^$@]+/"
         ]);
-        User::create($data);
+        $data['password'] = hash('sha256', $data['password']);
+        $user = User::create($data);
+        Auth::login($user);
+        $req->session()->push('messages',['succ', __('auth.succ_auth')]);
         return response()->json([
             'success' => 'success',
             'message' => __('auth.succ_reg')
@@ -28,8 +31,13 @@ class UserController extends Controller
             'email' => 'bail|required|email',
             'password' => "bail|required|min:4|max:30|regex: /[a-zA-Z0-9\\*\\?\\\\&\\(\\)^$@]+/"
         ]);
-        $a = Auth::attempt($cred, true);
-        if ($a) {
+        $user = User::where([
+            ['email', '=', $cred['email']],
+            ['password', '=', hash('sha256', $cred['password'])]
+        ])->get();
+        if (count($user)) {
+            Auth::login($user[0]);
+            $req->session()->push('messages',['succ', __('auth.succ_auth')]);
             return response()->json([
                 'success' => 'success',
                 'message' => __('auth.succ_auth')
@@ -40,9 +48,12 @@ class UserController extends Controller
                 'message' => __('auth.failed')
             ]); 
         }
-        // $users = User::where('email', $data['email'])->get();
-        // if (count($users)) {
-            
-        // }
+    }
+
+    public function logout(Request $request) {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect(route('home'));
     }
 }

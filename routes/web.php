@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
-use GuzzleHttp\Psr7\Request;
 use App\Http\Controllers\TestController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MessageController;
@@ -19,25 +18,22 @@ use App\Http\Controllers\MessageController;
 */
 
 Route::view('/', 'home')->name('home');
-
-Route::view('/im', 'im')->name('im');
-
 Route::view('/people', 'people')->name('people');
-
 Route::view('/about', 'about')->name('about');
+Route::post('/auth', [UserController::class, 'auth'])->name('auth');
+Route::post('/reg', [UserController::class, 'reg'])->name('reg');
 
 Route::get('/user/{id}', function () {
     $user = User::all()[0];
     return view('users/', ['user'=>$user]);
 })->where('id', '[0-9]+')->name('user');
 
-Route::post('/auth', [UserController::class, 'auth'])->name('auth');
-Route::post('/reg', [UserController::class, 'reg'])->name('reg');
 
-Route::post('/send_message', [MessageController::class, 'send'])->name('message_send');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+    Route::post('/send_message', [MessageController::class, 'send'])->name('message_send');
+    Route::view('/im', 'im')->name('im');
+});
 
 Route::get('/echo', [TestController::class, 'echo'])->name("echo");
 Route::post('/echo', [TestController::class, 'echo'])->name("echo");
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
