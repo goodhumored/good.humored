@@ -25,7 +25,7 @@
 
     <div class="container p-4">
         <h1>@yield('title-block')</h1>
-        <div class="row vh-100">
+        <div class="row vh-80 mt-3">
             {{-- @include('inc.sidebar') --}}
             @yield('content')
         </div>

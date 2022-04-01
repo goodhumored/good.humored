@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Chat;
+use App\Models\User;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -13,7 +16,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        
     }
 
     /**
@@ -21,8 +24,14 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
+    public function index(Request $req)
     {
-        return view('home');
+        $member = \App\Models\ChatMember::where([
+            ['user_id', '=', $req->user()->id],
+            ['chat_id', '=', 1]
+        ])->first();
+        $member->last_online = Carbon::now();
+        $member->save();
+        return view('home', ['chat' => Chat::find(1)]);
     }
 }

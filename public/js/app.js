@@ -35,6 +35,9 @@ $('.msg_form').submit(function (e) {
     contentType: false,
     success: function success(response) {
       console.log(response);
+    },
+    error: function error(xhr, s, t) {
+      show_toast('danger', xhr.messageJson['message']);
     }
   });
 });

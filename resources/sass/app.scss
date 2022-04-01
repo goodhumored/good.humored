@@ -1,12 +1,13 @@
 html {
-    --msg-height: 151px;
+    --msg-height: 96px;
 }
   
 .msg {
-    height: var(--msg-height);
+    min-height: var(--msg-height);
+    border: solid 1px #f9f9f9;
 }
   
 .messages {
     overflow-y: scroll;
-    height: calc(100vh - var(--msg-height));
+    height: calc(75vh - var(--msg-height));
 }  

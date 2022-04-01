@@ -17,12 +17,12 @@ return new class extends Migration
             $table->id();
             $table->timestamps();
             $table->text('text');
-            $table->unsignedBigInteger('from_id');
-            $table->unsignedBigInteger('attachment_id');
             $table->unsignedBigInteger('peer_id');
+            $table->unsignedBigInteger('from_id');
+            $table->unsignedBigInteger('attachment_id')->nullable();
+            $table->foreign('peer_id')->references('id')->on('chats');
             $table->foreign('from_id')->references('id')->on('users');
             $table->foreign('attachment_id')->references('id')->on('attachments');
-            $table->foreign('peer_id')->references('id')->on('chats');
         });
     }
 

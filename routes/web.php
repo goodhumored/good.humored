@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use Illuminate\Support\Facades\Route;
 use App\Models\User;
 use App\Http\Controllers\TestController;
@@ -17,7 +18,7 @@ use App\Http\Controllers\MessageController;
 |
 */
 
-Route::view('/', 'home')->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::view('/people', 'people')->name('people');
 Route::view('/about', 'about')->name('about');
 Route::post('/auth', [UserController::class, 'auth'])->name('auth');

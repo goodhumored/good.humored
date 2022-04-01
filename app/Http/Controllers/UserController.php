@@ -2,12 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserRegistred;
 use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+    /**
+     * Registers current user
+     *
+     * @param  Request $req
+     * @return void
+     */
     public function reg(Request $req)
     {
         $data = $req->validate([
@@ -18,13 +25,20 @@ class UserController extends Controller
         $data['password'] = hash('sha256', $data['password']);
         $user = User::create($data);
         Auth::login($user);
-        $req->session()->push('messages',['succ', __('auth.succ_auth')]);
+        $req->session()->push('messages', ['succ', __('auth.succ_auth')]);
         return response()->json([
             'success' => 'success',
             'message' => __('auth.succ_reg')
         ]);
+        UserRegistred::dispatch($user);
     }
 
+    /**
+     * Authenticate current user
+     *
+     * @param  Request $req
+     * @return void
+     */
     public function auth(Request $req)
     {
         $cred = $req->validate([
@@ -37,20 +51,27 @@ class UserController extends Controller
         ])->get();
         if (count($user)) {
             Auth::login($user[0]);
-            $req->session()->push('messages',['succ', __('auth.succ_auth')]);
+            $req->session()->push('messages', ['succ', __('auth.succ_auth')]);
             return response()->json([
                 'success' => 'success',
                 'message' => __('auth.succ_auth')
-            ]); 
+            ]);
         } else {
             return response()->json([
                 'error' => 'error',
                 'message' => __('auth.failed')
-            ]); 
+            ]);
         }
     }
 
-    public function logout(Request $request) {
+    /**
+     * Logouts current user
+     *
+     * @param  mixed $request
+     * @return void
+     */
+    public function logout(Request $request)
+    {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

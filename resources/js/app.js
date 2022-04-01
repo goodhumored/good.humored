@@ -27,6 +27,9 @@ $('.msg_form').submit((e)=>{
         contentType: false,
         success: function (response) {
             console.log(response)
+        },
+        error: function(xhr, s, t) {
+            show_toast('danger', xhr.messageJson['message']);
         }
     });
 })
