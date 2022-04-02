@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Chat;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -26,12 +27,14 @@ class HomeController extends Controller
      */
     public function index(Request $req)
     {
-        $member = \App\Models\ChatMember::where([
-            ['user_id', '=', $req->user()->id],
-            ['chat_id', '=', 1]
-        ])->first();
-        $member->last_online = Carbon::now();
-        $member->save();
+        if (Auth::user()) {
+            $member = \App\Models\ChatMember::where([
+                ['user_id', '=', $req->user()->id],
+                ['chat_id', '=', 1]
+            ])->first();
+            $member->last_online = Carbon::now();
+            $member->save();
+        }
         return view('home', ['chat' => Chat::find(1)]);
     }
 }

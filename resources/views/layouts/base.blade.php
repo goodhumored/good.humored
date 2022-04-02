@@ -23,7 +23,7 @@
     </div>
     @include('inc.header')
 
-    <div class="container p-4">
+    <div id="app" class="container p-4">
         <h1>@yield('title-block')</h1>
         <div class="row vh-80 mt-3">
             {{-- @include('inc.sidebar') --}}
@@ -36,6 +36,12 @@
 
 <script>
     messages = @json(session()->get('messages'));
+    @auth
+    var user = @json([
+        'name' => Auth::user()->name,
+        'avatar' => Storage::url($msg->author()->avatar()->getPath())
+    ]);
+    @endauth
 </script>
 <!-- jquery -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>

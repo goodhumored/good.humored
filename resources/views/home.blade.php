@@ -6,39 +6,17 @@
 	<div class="row h-100">
 		<div class="row p-4 messages align-content-start"> {{--Чат--}}
 			@foreach ($chat->messages() as $msg)
-				<div class="row msg mx-0 pt-2 mt-1"> {{--Сообщение--}}
-					<div class="col-sm-auto"> {{--ава--}}
-						<img class="rounded-circle" height="32" width="32"
-						src="{{Storage::url($msg->author()->avatar()->getPath())}}" alt="avatar">
-					</div>
-					<div class="col">{{--Имя и текст--}}
-						<div class="row">
-							<p class="font-weight-bold">{{$msg->author()->name}}</p>
-						</div>
-						<div class="row px-4">
-							{{$msg->text}}
-						</div>
-					</div>
-				</div>
+				<message-block
+					avatar="{{Storage::url($msg->author()->avatar()->getPath())}}"
+					name="{{$msg->author()->name}}"
+					text="{{$msg->text}}">
+				</message-block>
 			@endforeach
 		</div>
 		{{-- Форма отправки --}}
 		<div class="row align-self-end m-0"> 
 			@auth
-				<form class="msg_form border-top" action="{{ route('message_send') }}" method="POST">
-					@csrf
-					<input type="hidden" name="pid" value="{{ $chat->id }}">
-					<div class="row p-3">
-						<div class="col textfield">
-							<textarea name="text" class="form-control" style="max-height: 150px"></textarea>
-						</div>
-						<div class="col-sm-auto btns">
-							<div class="row">
-								<button type="submit" class="btn btn-dark">Отправить</button>
-							</div>
-						</div>
-					</div>
-				</form>
+				<message-form pid="{{$chat->id}}" token="{{csrf_token()}}" action="{{ route('message_send') }}"/>
 			@else
 				<p>Авторизуйтесь, чтобы оставлять сообщения в беседе</p>
 			@endauth
